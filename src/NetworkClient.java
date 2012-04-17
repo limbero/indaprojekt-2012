@@ -2,18 +2,16 @@ import java.io.*;
 import java.net.*;  
 import java.util.Scanner;
 
-/**
-   @author Snilledata
-*/
 public class NetworkClient {
-    private static int connectionPort = 8989;
+    private static int port = 1415;
+    private static String host = "limbero";
+    private static String user = "luddeha";
     
     public static void main(String[] args) throws IOException {
-        
-        Socket ATMSocket = null;
+        Socket ServerSocket = null;
         PrintWriter out = null;
         BufferedReader in = null;
-        String adress = "130.229.169.77";
+        String adress = "localhost";
 
         /*try {
             adress = args[0];
@@ -22,10 +20,10 @@ public class NetworkClient {
             System.exit(1);
         }*/
         try {
-            ATMSocket = new Socket(adress, connectionPort); 
-            out = new PrintWriter(ATMSocket.getOutputStream(), true);
+            ServerSocket = new Socket(adress, port); 
+            out = new PrintWriter(ServerSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader
-                                    (ATMSocket.getInputStream()));
+                                    (ServerSocket.getInputStream()));
         } catch (UnknownHostException e) {
             System.err.println("Unknown host: " +adress);
             System.exit(1);
@@ -34,41 +32,40 @@ public class NetworkClient {
             System.exit(1);
         }
 
-        System.out.println("Contacting bank ... ");
-        System.out.println(in.readLine()); 
+        System.out.println("Contacting server ... ");
+        String line = in.readLine();
+        System.out.println(line);
+
+        boolean a = false;
+        boolean b = false;
+        while(!a || !b){
+        	if(line != null){
+        		if(line.equals("host")){
+        			System.out.println("sending "+host);
+        			out.println(host);
+        			a = true;
+        		}
+        		if(line.equals("user")){
+        			System.out.println("host matched, sending "+user);
+        			out.println(user);
+        			b = true;
+        		}
+        	}
+        	line = in.readLine();
+        }
+        System.out.println("user matched.");
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("> ");
-        int menuOption = scanner.nextInt();
-        int userInput;
+        String menuOption = scanner.next();
         out.println(menuOption);
-        while(menuOption < 4) {
-                if(menuOption == 1) {
-                        System.out.println(in.readLine()); 
-                        System.out.println(in.readLine());
-                        System.out.print("> ");
-                        menuOption = scanner.nextInt();
-                        out.println(menuOption);           
-                } else if (menuOption > 3) {
-                    break;
-                }	
-                else {
-                    System.out.println(in.readLine()); 
-                    userInput = scanner.nextInt();
-                    out.println(userInput);
-                    String str;
-                    do {
-                        str = in.readLine();
-                        System.out.println(str);
-                    } while (! str.startsWith("(1)"));
-                    System.out.print("> ");
-                    menuOption = scanner.nextInt();
-                    out.println(menuOption);           
-                }	
-        }		
-		
+        
+        while(!menuOption.equals("exit")){
+        	
+        }
+        
         out.close();
         in.close();
-        ATMSocket.close();
+        ServerSocket.close();
     }
 }   

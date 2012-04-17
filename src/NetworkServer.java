@@ -1,12 +1,9 @@
 import java.net.*;
 import java.io.*;
 
-/**
-   @author Viebrapadata
-*/
 public class NetworkServer {
 
-    private static int connectionPort = 8989;
+    private static int connectionPort = 1415;
     
     public static void main(String[] args) throws IOException {
         
@@ -21,10 +18,12 @@ public class NetworkServer {
             System.exit(1);
         }
 	
-        System.out.println("Bank started listening on port: " + connectionPort);
-        while (listening)
+        System.out.println("Server started listening on port: " + connectionPort);
+        
+        while (listening) {
             new NetworkServerThread(serverSocket.accept()).start();
-
+        }
+        
         serverSocket.close();
     }
 }
