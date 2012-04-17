@@ -27,9 +27,9 @@ public class CQCGame extends StateBasedGame{
 	}
 
 	@Override
-	public void initStatesList(GameContainer arg0) throws SlickException {
-		// TODO Auto-generated method stub
+	public void initStatesList(GameContainer gameContainer) throws SlickException {
 		
-	}
-
+		this.getState(MAINMENU).init(gameContainer, this);
+        this.getState(GAMEPLAY).init(gameContainer, this);
+		}
 }
