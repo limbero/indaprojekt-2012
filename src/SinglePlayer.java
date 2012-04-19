@@ -5,8 +5,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-
-public class MainMenu implements GameState{
+public class SinglePlayer implements GameState {
 
 	@Override
 	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {
@@ -180,4 +179,5 @@ public class MainMenu implements GameState{
 		// TODO Auto-generated method stub
 		
 	}
+
 }
