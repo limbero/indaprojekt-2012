@@ -77,21 +77,19 @@ public class MultiPlayer implements GameState {
         
         // Will update the bullets so they go in the direction of the player
         for(int i = 0; i < bullets.size(); i++){
-            bullets.get(i).setX((float) (bullets.get(i).getDirectionX()));
-            bullets.get(i).setY((float) (bullets.get(i).getDirectionY()));
+            bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
+            bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
         }
         
-        if(input.isMousePressed(1)){
+        if(input.isKeyDown(Input.KEY_C)){
         	float hip = 0.4f * delta;
         	float rotation = player.getRotation();
         	bullets.add(new Bullet(new Image("data/bullet.jpg")));
         	int i = bullets.size()-1;
         	bullets.get(i).setX(playerX);
         	bullets.get(i).setY(playerY);
-        	bullets.get(i).setDirectionX((float) (bullets.get(i).getX() + 
-        			hip * Math.sin(Math.toRadians(rotation))));
-        	bullets.get(i).setDirectionY((float) (bullets.get(i).getY() - 
-        			hip * Math.cos(Math.toRadians(rotation))));
+        	bullets.get(i).setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
+        	bullets.get(i).setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
         }
 		if(input.isKeyDown(Input.KEY_W))
         {
