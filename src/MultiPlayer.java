@@ -70,6 +70,7 @@ public class MultiPlayer implements GameState {
 			}
 			else if(viewTopLeftY>0){
 				viewTopLeftY-=mod;
+				viewBottomRightY-=mod;
 			}
 			else if(playerY>25){
         		playerY-=mod;
@@ -82,6 +83,7 @@ public class MultiPlayer implements GameState {
 			}
 			else if(viewTopLeftX>0){
 				viewTopLeftX-=mod;
+				viewBottomRightX-=mod;
 			}
 			else if(playerX>25){
         		playerX-=mod;
@@ -94,6 +96,7 @@ public class MultiPlayer implements GameState {
 			}
 			else if(viewTopLeftY<600){
 				viewTopLeftY+=mod;
+				viewBottomRightY+=mod;
 			}
 			else if(playerY<575){
         		playerY+=mod;
@@ -106,6 +109,7 @@ public class MultiPlayer implements GameState {
 			}
 			else if(viewTopLeftX<800){
 				viewTopLeftX+=mod;
+				viewBottomRightX+=mod;
 			}
 			else if(playerX<775){
         		playerX+=mod;
