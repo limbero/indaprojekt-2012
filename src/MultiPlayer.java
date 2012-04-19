@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -18,6 +20,10 @@ public class MultiPlayer implements GameState {
 	int mapWidth=2560, mapHeight=1570;
 	float viewBottomRightX, viewBottomRightY, viewTopLeftX, viewTopLeftY;
 	
+	Bullet bullet = null;
+	// Array for storing bullets
+    ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	
 	public MultiPlayer(){
 	}
 	
@@ -35,6 +41,8 @@ public class MultiPlayer implements GameState {
         player = new Image("data/player.png");
         map = new Image("data/map.jpeg");
 		//esctest = new Image("data/player.png");
+        
+        bullet = new Bullet(new Image("data/bullet.jpg"));
 		
 	}
 
@@ -45,6 +53,13 @@ public class MultiPlayer implements GameState {
         player.drawCentered(playerX, playerY);
         //map.setAlpha(0);
 		//esctest.drawCentered(10, 10);
+        
+        // Draws the bullet in the new position
+        if(bullets.size() > 0){
+	        for(int i = 0; i < bullets.size()-1; i++){
+	        	bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
+	        }
+        }
 		
 	}
 
@@ -62,6 +77,21 @@ public class MultiPlayer implements GameState {
         r = Math.atan2(mouseY-playerY, mouseX-playerX);
         player.setRotation((float) Math.toDegrees(r+(Math.PI/2)));
         
+        // Will update the bullets so they go in the direction of the player
+        for(int i = 0; i < bullets.size(); i++){
+        	float hip = 0.4f * delta;
+        	
+        	float rotation = player.getRotation();
+            System.out.println("bullet forward");
+            bullets.get(i).setX((float) ((bullets.get(i)).getX() + hip * Math.sin(Math.toRadians(rotation))));
+            bullets.get(i).setY((float) (bullets.get(i).getY() - hip * Math.cos(Math.toRadians(rotation))));
+        }
+        
+        if(input.isMousePressed(1)){
+        	bullets.add(new Bullet(new Image("data/bullet.jpg")));
+        	bullets.get(bullets.size()-1).setX(playerX);
+        	bullets.get(bullets.size()-1).setY(playerY);
+        }
 		if(input.isKeyDown(Input.KEY_W))
         {
 			if(viewTopLeftY>0 && playerY>300){
