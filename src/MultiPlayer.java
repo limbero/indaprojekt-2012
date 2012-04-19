@@ -43,6 +43,7 @@ public class MultiPlayer implements GameState {
 			throws SlickException {
         map.draw(0, 0, viewTopLeftX, viewTopLeftY, viewBottomRightX, viewBottomRightY);
         player.drawCentered(playerX, playerY);
+        //map.setAlpha(0);
 		//esctest.drawCentered(10, 10);
 		
 	}
