@@ -50,8 +50,6 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void update(GameContainer gc, StateBasedGame sg, int delta)
 			throws SlickException {
-
-		System.out.println(-viewTopLeftX+viewBottomRightX);
 		
 		Input input = gc.getInput();
 		
@@ -61,7 +59,7 @@ public class MultiPlayer implements GameState {
         mouseY = input.getMouseY();
         
         r = Math.atan2(mouseY-playerY, mouseX-playerX);
-        player.setRotation((float) Math.toDegrees(r));
+        player.setRotation((float) Math.toDegrees(r+(Math.PI/2)));
         
 		if(input.isKeyDown(Input.KEY_W))
         {
