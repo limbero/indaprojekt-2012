@@ -11,6 +11,8 @@ public class Bullet {
 	private float x;
 	private float y;
 	private Image image;
+	private float directionX;
+	private float directionY;
 
 	public Bullet(Image image){
 		this.image = image;
@@ -38,6 +40,21 @@ public class Bullet {
 
 	public void setY(float y){
 		this.y = y;
+	}
+	
+	public void setDirectionX(float direction){
+		this.directionX = direction;
+	}
+	
+	public void setDirectionY(float direction){
+		this.directionY = direction;
+	}
+	
+	public float getDirectionX(){
+		return directionX;
+		
+	}public float getDirectionY(){
+		return directionY;
 	}
 
 }

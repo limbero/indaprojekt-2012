@@ -55,11 +55,9 @@ public class MultiPlayer implements GameState {
 		//esctest.drawCentered(10, 10);
         
         // Draws the bullet in the new position
-        if(bullets.size() > 0){
-	        for(int i = 0; i < bullets.size()-1; i++){
-	        	bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
-	        }
-        }
+	    for(int i = 0; i < bullets.size()-1; i++){
+	    	bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
+	    }
 		
 	}
 
@@ -79,18 +77,21 @@ public class MultiPlayer implements GameState {
         
         // Will update the bullets so they go in the direction of the player
         for(int i = 0; i < bullets.size(); i++){
-        	float hip = 0.4f * delta;
-        	
-        	float rotation = player.getRotation();
-            System.out.println("bullet forward");
-            bullets.get(i).setX((float) ((bullets.get(i)).getX() + hip * Math.sin(Math.toRadians(rotation))));
-            bullets.get(i).setY((float) (bullets.get(i).getY() - hip * Math.cos(Math.toRadians(rotation))));
+            bullets.get(i).setX((float) (bullets.get(i).getDirectionX()));
+            bullets.get(i).setY((float) (bullets.get(i).getDirectionY()));
         }
         
         if(input.isMousePressed(1)){
+        	float hip = 0.4f * delta;
+        	float rotation = player.getRotation();
         	bullets.add(new Bullet(new Image("data/bullet.jpg")));
-        	bullets.get(bullets.size()-1).setX(playerX);
-        	bullets.get(bullets.size()-1).setY(playerY);
+        	int i = bullets.size()-1;
+        	bullets.get(i).setX(playerX);
+        	bullets.get(i).setY(playerY);
+        	bullets.get(i).setDirectionX((float) (bullets.get(i).getX() + 
+        			hip * Math.sin(Math.toRadians(rotation))));
+        	bullets.get(i).setDirectionY((float) (bullets.get(i).getY() - 
+        			hip * Math.cos(Math.toRadians(rotation))));
         }
 		if(input.isKeyDown(Input.KEY_W))
         {
