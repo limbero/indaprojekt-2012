@@ -27,11 +27,11 @@ public class MultiPlayer implements GameState {
 	float viewTopLeftX, viewTopLeftY;
 	int time;
 
-	Bullet bullet = null;
+	//Bullet bullet = null;
 	boolean bulletExists = false;
 	
 	// Array for storing bullets
-	//ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
 	public MultiPlayer(){
 	}
@@ -73,8 +73,12 @@ public class MultiPlayer implements GameState {
 		map = new Image("data/map.jpeg");
 		viewTopLeftX=(map.getWidth()-1600)/2;
 		viewTopLeftY=(map.getHeight()-1200)/2;
-
-		bullet = new Bullet(new Image("data/bullet.jpg"));
+		
+		for(int i = 0; i < bullets.size(); i++){
+			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
+			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
+		}
+		//bullet = new Bullet(new Image("data/bullet.jpg"));
 		//time=0;
 	}
 
@@ -86,12 +90,12 @@ public class MultiPlayer implements GameState {
 		map.draw(0, 0, viewTopLeftX, viewTopLeftY, (viewTopLeftX+800), (viewTopLeftY+600));
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
-		bullet.getImage().draw(bullet.getX(), bullet.getY());
+		//bullet.getImage().draw(bullet.getX(), bullet.getY());
 		
-		// Draws the bullet in the new position
-		/*for(int i = 0; i < bullets.size()-1; i++){
+		// Draws the bullets in the new position
+		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
-		}*/
+		}
 	}
 
 	@Override
@@ -108,45 +112,23 @@ public class MultiPlayer implements GameState {
 		r = Math.atan2(mouseY-players[0].getY(), mouseX-players[0].getX());
 		player[0].setRotation((float) Math.toDegrees(r+(Math.PI/2)));
 		
-		if(bullet.getX() < -viewTopLeftX){
-			bullet.setX(-viewTopLeftX-5);
-			bullet.setY(-viewTopLeftY-5);
-			bullet.setDirectionX(0);
-			bullet.setDirectionY(0);
-			bulletExists = false;
-		}
-		else if(bullet.getY() < -viewTopLeftY){
-			bullet.setX(-viewTopLeftX-5);
-			bullet.setY(-viewTopLeftY-5);
-			bullet.setDirectionX(0);
-			bullet.setDirectionY(0);
-			bulletExists = false;
-		}
-		else if(bullet.getX() >  (map.getWidth()-viewTopLeftX)){
-			bullet.setX(-viewTopLeftX-5);
-			bullet.setY(-viewTopLeftY-5);
-			bullet.setDirectionX(0);
-			bullet.setDirectionY(0);
-			bulletExists = false;
-		}
-		else if(bullet.getY() > (map.getHeight()-viewTopLeftY)){
-			bullet.setX(-viewTopLeftX-5);
-			bullet.setY(-viewTopLeftY-5);
-			bullet.setDirectionX(0);
-			bullet.setDirectionY(0);
-			bulletExists = false;
-		}
-		bullet.setX((float) (bullet.getX() + mod*bullet.getDirectionX()));
-		bullet.setY((float) (bullet.getY() - mod*bullet.getDirectionY()));
+//		bulletExists = checkBorders(bullet.getX(), bullet.getY());
+//		
+//		bullet.setX((float) (bullet.getX() + mod*bullet.getDirectionX()));
+//		bullet.setY((float) (bullet.getY() - mod*bullet.getDirectionY()));
 		
 		// Will update the bullets so they go in the direction of the player
-		/* for(int i = 0; i < bullets.size(); i++){
+		// Destroys the bullets outside the screen
+		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
+			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
+				bullets.remove(i);
+			}
 		}
 
-		if(input.isKeyDown(Input.KEY_SPACE)){
-			if(time==0 && bullets.size()<30){
+		if(input.isMousePressed(0)){
+			if(bullets.size()<30){
 				float hip = 0.4f * delta;
 				float rotation = player[0].getRotation();
 				bullets.add(new Bullet(new Image("data/bullet.jpg")));
@@ -157,16 +139,16 @@ public class MultiPlayer implements GameState {
 				bullets.get(i).setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
 				time++;
 			}
-			else if(time==10){
-				time=0;
-			}
-			if(bullets.size() == 30){
-				bullets.clear();
-			}
+//			else if(time==10){
+//				time=0;
+//			}
+//			if(bullets.size() == 30){
+//				bullets.clear();
+//			}
 		}
-		if(time<10 && time !=0){
-			time++;
-		}*/
+//		if(time<10 && time !=0){
+//			time++;
+//		}
 		
 		//Player 1 Controls
 		if(input.isKeyDown(Input.KEY_W))
@@ -217,7 +199,7 @@ public class MultiPlayer implements GameState {
 				players[0].setX(players[0].getX()+2*mod);
 			}
 		}
-		if(input.isMouseButtonDown(0) && !bulletExists){
+		/*if(input.isMouseButtonDown(0) && !bulletExists){
 			float hip = 0.4f * delta;
 			float rotation = player[0].getRotation();
 			bullet.setX(players[0].getX());
@@ -232,7 +214,29 @@ public class MultiPlayer implements GameState {
 		if(!bulletExists && timer>0){
 			System.out.println("Bullet flight time: "+timer);
 			timer=0;
+		}*/
+	}
+	
+	/**
+	 * @param x
+	 * @param y
+	 * @return False if the coordinates is outside the
+	 * background.
+	 */
+	public boolean checkBorders(float x, float y){
+		if(x < -viewTopLeftX){
+			return false;
 		}
+		else if(y < -viewTopLeftY){
+			return false;
+		}
+		else if(x >  (map.getWidth()-viewTopLeftX)){
+			return false;
+		}
+		else if(y > (map.getHeight()-viewTopLeftY)){
+			return false;
+		}
+		return true;
 	}
 
 	//SPACING
