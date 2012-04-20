@@ -3,13 +3,13 @@ import java.io.*;
 
 public class NetworkServer {
 
-    private static int connectionPort = 1415;
+    int connectionPort = 14115;
+    NetworkServerThread NST;
+    ServerSocket serverSocket;
     
-    public static void main(String[] args) throws IOException {
+    public NetworkServer() throws IOException {
         
-        ServerSocket serverSocket = null;
-       
-        boolean listening = true;
+        serverSocket = null;
         
         try {
             serverSocket = new ServerSocket(connectionPort); 
@@ -20,10 +20,21 @@ public class NetworkServer {
 	
         System.out.println("Server started listening on port: " + connectionPort);
         
-        while (listening) {
-            new NetworkServerThread(serverSocket.accept()).start();
-        }
-        
-        serverSocket.close();
+        NST = new NetworkServerThread(serverSocket.accept());
+        NST.start();
+    }
+    
+    public void stop(){
+    	try {
+			serverSocket.close();
+		} catch (IOException e) {}
+    }
+    
+    public float getX(){
+    	return NST.x;
+    }
+    
+    public float getY(){
+    	return NST.y;
     }
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;   
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -9,230 +10,300 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class MultiPlayer implements GameState {
-	Image player, map, esctest;
 	
-	boolean esc = false;
+	Image map;
 	
-	float mod = (float) 0.3;
+	Image[] player;
+	Player[] players;
 	
-	float playerX=400, playerY=300;
+	double timer;
+
+	//NetworkServer netserv;
+	//NetworkClient netcli;
+
+	float mod = (float) 3;
 	int mouseX, mouseY;
-	int mapWidth=2560, mapHeight=1570;
-	float viewBottomRightX, viewBottomRightY, viewTopLeftX, viewTopLeftY;
 	
+	float viewTopLeftX, viewTopLeftY;
+	int time;
+
 	Bullet bullet = null;
-	// Array for storing bullets
-    ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	boolean bulletExists = false;
 	
+	// Array for storing bullets
+	//ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+
 	public MultiPlayer(){
 	}
-	
+
 	@Override
 	public void init(GameContainer gc, StateBasedGame sg)
 			throws SlickException {
+		/*try{
+			netserv = new NetworkServer();
+		}catch (IOException e){}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {}
+		
+		System.out.println("server uppe");
+		
+		netcli = new NetworkClient("localhost", p1, p1);
+		
+		System.out.println("klient inledd");
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {}
+		
+		netcli.start();
+		
+		System.out.println("klient startad");*/
+		
+		players = new Player[4];
+		player = new Image[4];
+		
+		for(int i=0; i<4; i++){
+			players[i] = new Player("player"+(i+1));
+			player[i] = players[i].getImage();
+		}
+		players[0].setX(400);
+		players[0].setX(300);
+		
+		map = new Image("data/map.jpeg");
+		viewTopLeftX=(map.getWidth()-1600)/2;
+		viewTopLeftY=(map.getHeight()-1200)/2;
 
-		viewBottomRightX=(mapWidth+1600)/2;
-		viewBottomRightY=(mapHeight+1200)/2;
-		viewTopLeftX=(mapWidth-1600)/2;
-		viewTopLeftY=(mapHeight-1200)/2;
-		
-		System.out.println(-viewTopLeftX+viewBottomRightX);
-		
-        player = new Image("data/player.png");
-        map = new Image("data/map.jpeg");
-		//esctest = new Image("data/player.png");
-        
-        bullet = new Bullet(new Image("data/bullet.jpg"));
-		
+		bullet = new Bullet(new Image("data/bullet.jpg"));
+		//time=0;
 	}
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sg, Graphics gfx)
 			throws SlickException {
-        map.draw(0, 0, viewTopLeftX, viewTopLeftY, viewBottomRightX, viewBottomRightY);
-        player.drawCentered(playerX, playerY);
-        //map.setAlpha(0);
-		//esctest.drawCentered(10, 10);
-        
-        // Draws the bullet in the new position
-	    for(int i = 0; i < bullets.size()-1; i++){
-	    	bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
-	    }
+		//map.setAlpha(0);
 		
+		map.draw(0, 0, viewTopLeftX, viewTopLeftY, (viewTopLeftX+800), (viewTopLeftY+600));
+		player[0].drawCentered(players[0].getX(), players[0].getY());
+		
+		bullet.getImage().draw(bullet.getX(), bullet.getY());
+		
+		// Draws the bullet in the new position
+		/*for(int i = 0; i < bullets.size()-1; i++){
+			bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
+		}*/
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sg, int delta)
 			throws SlickException {
-		
+
 		Input input = gc.getInput();
-		
+
 		double r = 0;
+
+		mouseX = input.getMouseX();
+		mouseY = input.getMouseY();
+
+		r = Math.atan2(mouseY-players[0].getY(), mouseX-players[0].getX());
+		player[0].setRotation((float) Math.toDegrees(r+(Math.PI/2)));
 		
-        mouseX = input.getMouseX();
-        mouseY = input.getMouseY();
-        
-        r = Math.atan2(mouseY-playerY, mouseX-playerX);
-        player.setRotation((float) Math.toDegrees(r+(Math.PI/2)));
-        
-        // Will update the bullets so they go in the direction of the player
-        for(int i = 0; i < bullets.size(); i++){
-            bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
-            bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
-        }
-        
-        if(input.isKeyDown(Input.KEY_C)){
-        	float hip = 0.4f * delta;
-        	float rotation = player.getRotation();
-        	bullets.add(new Bullet(new Image("data/bullet.jpg")));
-        	int i = bullets.size()-1;
-        	bullets.get(i).setX(playerX);
-        	bullets.get(i).setY(playerY);
-        	bullets.get(i).setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
-        	bullets.get(i).setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
-        }
+		if(bullet.getX() < -viewTopLeftX){
+			bullet.setX(-viewTopLeftX-5);
+			bullet.setY(-viewTopLeftY-5);
+			bullet.setDirectionX(0);
+			bullet.setDirectionY(0);
+			bulletExists = false;
+		}
+		else if(bullet.getY() < -viewTopLeftY){
+			bullet.setX(-viewTopLeftX-5);
+			bullet.setY(-viewTopLeftY-5);
+			bullet.setDirectionX(0);
+			bullet.setDirectionY(0);
+			bulletExists = false;
+		}
+		else if(bullet.getX() >  (map.getWidth()-viewTopLeftX)){
+			bullet.setX(-viewTopLeftX-5);
+			bullet.setY(-viewTopLeftY-5);
+			bullet.setDirectionX(0);
+			bullet.setDirectionY(0);
+			bulletExists = false;
+		}
+		else if(bullet.getY() > (map.getHeight()-viewTopLeftY)){
+			bullet.setX(-viewTopLeftX-5);
+			bullet.setY(-viewTopLeftY-5);
+			bullet.setDirectionX(0);
+			bullet.setDirectionY(0);
+			bulletExists = false;
+		}
+		bullet.setX((float) (bullet.getX() + mod*bullet.getDirectionX()));
+		bullet.setY((float) (bullet.getY() - mod*bullet.getDirectionY()));
+		
+		// Will update the bullets so they go in the direction of the player
+		/* for(int i = 0; i < bullets.size(); i++){
+			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
+			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
+		}
+
+		if(input.isKeyDown(Input.KEY_SPACE)){
+			if(time==0 && bullets.size()<30){
+				float hip = 0.4f * delta;
+				float rotation = player[0].getRotation();
+				bullets.add(new Bullet(new Image("data/bullet.jpg")));
+				int i = bullets.size()-1;
+				bullets.get(i).setX(players[0].getX());
+				bullets.get(i).setY(players[0].getY());
+				bullets.get(i).setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
+				bullets.get(i).setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
+				time++;
+			}
+			else if(time==10){
+				time=0;
+			}
+			if(bullets.size() == 30){
+				bullets.clear();
+			}
+		}
+		if(time<10 && time !=0){
+			time++;
+		}*/
+		
+		//Player 1 Controls
 		if(input.isKeyDown(Input.KEY_W))
-        {
-			if(viewTopLeftY>0 && playerY>300){
-				playerY-=mod;
+		{
+			if(viewTopLeftY>0 && players[0].getY()>300){
+				players[0].setY(players[0].getY()-2*mod);
 			}
 			else if(viewTopLeftY>0){
 				viewTopLeftY-=mod;
-				viewBottomRightY-=mod;
 			}
-			else if(playerY>25){
-        		playerY-=mod;
-        	}
-        }
-        if(input.isKeyDown(Input.KEY_A))
-        {
-        	if(viewTopLeftX>0 && playerX>400){
-				playerX-=mod;
+			else if(players[0].getY()>25){
+				players[0].setY(players[0].getY()-2*mod);
+			}
+		}
+		if(input.isKeyDown(Input.KEY_A))
+		{
+			if(viewTopLeftX>0 && players[0].getX()>400){
+				players[0].setX(players[0].getX()-2*mod);
 			}
 			else if(viewTopLeftX>0){
 				viewTopLeftX-=mod;
-				viewBottomRightX-=mod;
 			}
-			else if(playerX>25){
-        		playerX-=mod;
-        	}
-        }
-        if(input.isKeyDown(Input.KEY_S))
-        {
-        	if(viewTopLeftY<600 && playerY<300){
-				playerY+=mod;
+			else if(players[0].getX()>25){
+				players[0].setX(players[0].getX()-2*mod);
+			}
+		}
+		if(input.isKeyDown(Input.KEY_S))
+		{
+			if(viewTopLeftY<600 && players[0].getY()<300){
+				players[0].setY(players[0].getY()+2*mod);
 			}
 			else if(viewTopLeftY<600){
 				viewTopLeftY+=mod;
-				viewBottomRightY+=mod;
 			}
-			else if(playerY<575){
-        		playerY+=mod;
-        	}
-        }
-        if(input.isKeyDown(Input.KEY_D))
-        {
-        	if(viewTopLeftX<800 && playerX<400){
-				playerX+=mod;
+			else if(players[0].getY()<575){
+				players[0].setY(players[0].getY()+2*mod);
+			}
+		}
+		if(input.isKeyDown(Input.KEY_D))
+		{
+			if(viewTopLeftX<800 && players[0].getX()<400){
+				players[0].setX(players[0].getX()+2*mod);
 			}
 			else if(viewTopLeftX<800){
 				viewTopLeftX+=mod;
-				viewBottomRightX+=mod;
 			}
-			else if(playerX<775){
-        		playerX+=mod;
-        	}
-        }
-		
-		/*if(input.isKeyDown(Input.KEY_ESCAPE)){
-			if(!esc){
-				esctest.setAlpha(1);
-	        	esc = true;
-	        	System.out.println("EscMenu Alpha:"+esctest.getAlpha());
-				try{
-					Thread.sleep(500);
-				}catch(InterruptedException e){}
+			else if(players[0].getX()<775){
+				players[0].setX(players[0].getX()+2*mod);
 			}
-			else{
-				esctest.setAlpha(0);
-		        esc = false;
-	        	System.out.println("EscMenu Alpha:"+esctest.getAlpha());
-				try{
-					Thread.sleep(500);
-				}catch(InterruptedException e){}
-			}
-		}*/
+		}
+		if(input.isKeyDown(Input.KEY_SPACE) && !bulletExists){
+			float hip = 0.4f * delta;
+			float rotation = player[0].getRotation();
+			bullet.setX(players[0].getX());
+			bullet.setY(players[0].getY());
+			bullet.setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
+			bullet.setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
+			bulletExists = true;
+		}
+		if(bulletExists){
+			timer++;
+		}
+		if(!bulletExists && timer>0){
+			System.out.println("Bullet flight time: "+timer);
+			timer=0;
+		}
 	}
 
+	//SPACING
+	//SPACING
+	//SPACING
+	//SPACING
+	//SPACING
+	
 	@Override
-	public void keyPressed(int key, char c) {
+	public void keyPressed(int arg0, char arg1) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void keyReleased(int arg0, char arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void leave(GameContainer arg0, StateBasedGame arg1)
-			throws SlickException {
+	public void leave(GameContainer arg0, StateBasedGame arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
-
-	//SPACING
-	//SPACING
-	//SPACING
-	//SPACING
-	//SPACING
-
+	
 	@Override
 	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseDragged(int arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseMoved(int arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(int arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(int arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseWheelMoved(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void inputEnded() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void inputStarted() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -244,74 +315,74 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void setInput(Input arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerButtonPressed(int arg0, int arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerButtonReleased(int arg0, int arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerDownPressed(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerDownReleased(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerLeftPressed(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerLeftReleased(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerRightPressed(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerRightReleased(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerUpPressed(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void controllerUpReleased(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void enter(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

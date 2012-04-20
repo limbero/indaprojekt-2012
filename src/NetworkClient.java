@@ -3,69 +3,83 @@ import java.net.*;
 import java.util.Scanner;
 
 public class NetworkClient {
-    private static int port = 1415;
-    private static String host = "limbero";
-    private static String user = "luddeha";
-    
-    public static void main(String[] args) throws IOException {
-        Socket ServerSocket = null;
-        PrintWriter out = null;
-        BufferedReader in = null;
-        String adress = "localhost";
+	private static int port = 14115;
+	Socket ServerSocket = null;
+	PrintWriter out = null;
+	BufferedReader in = null;
+	Player p1, hp;
 
-        /*try {
-            adress = args[0];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Missing argument ip-adress");
-            System.exit(1);
-        }*/
-        try {
-            ServerSocket = new Socket(adress, port); 
-            out = new PrintWriter(ServerSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader
-                                    (ServerSocket.getInputStream()));
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " +adress);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't open connection to " + adress);
-            System.exit(1);
-        }
+	String adress, user, host, line;
 
-        System.out.println("Contacting server ... ");
-        String line = in.readLine();
-        System.out.println(line);
+	boolean connected = false;
 
-        boolean a = false;
-        boolean b = false;
-        while(!a || !b){
-        	if(line != null){
-        		if(line.equals("host")){
-        			System.out.println("sending "+host);
-        			out.println(host);
-        			a = true;
-        		}
-        		if(line.equals("user")){
-        			System.out.println("host matched, sending "+user);
-        			out.println(user);
-        			b = true;
-        		}
-        	}
-        	line = in.readLine();
-        }
-        System.out.println("user matched.");
+	public NetworkClient(String ip, Player player, Player hostingPlayer){
+		p1 = player;
+		hp = hostingPlayer;
+		adress = ip;
+		user = player.getName();
+		host = hostingPlayer.getName();
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("> ");
-        String menuOption = scanner.next();
-        out.println(menuOption);
-        
-        while(!menuOption.equals("exit")){
-        	
-        }
-        
-        out.close();
-        in.close();
-        ServerSocket.close();
-    }
+		try {
+			ServerSocket = new Socket(adress, port); 
+			out = new PrintWriter(ServerSocket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader
+					(ServerSocket.getInputStream()));
+		} catch (UnknownHostException e) {
+			System.err.println("Unknown host: " +adress);
+			System.exit(1);
+		} catch (IOException e) {
+			System.err.println("Couldn't open connection to " + adress);
+			System.exit(1);
+		}
+
+		try{
+			line = in.readLine();
+		} catch (IOException e) {}
+
+		boolean a = false;
+		boolean b = false;
+		boolean c = false;
+		while(!a || !b || !c){
+			if(line != null){
+				if(line.equals("host")){
+					out.println(host);
+					a = true;
+				}
+				if(line.equals("user")){
+					out.println(user);
+					b = true;
+				}
+				if(line.equals("done")){
+					c=true;
+				}
+			}
+			try{
+				line = in.readLine();
+			} catch (IOException e) {}
+		}
+		connected = true;
+	}
+
+	public boolean connected(){
+		return connected;
+	}
+
+	public void start(){
+		if(connected){
+			String coords = "";
+			coords = p1.getX()+" "+p1.getY();
+			out.println(coords);
+
+			while(!coords.equals("exit")){
+				out.println(coords);
+			}
+
+			out.close();
+			try{
+				in.close();
+				ServerSocket.close();
+			} catch (IOException e) {}
+		}
+	}
 }   
