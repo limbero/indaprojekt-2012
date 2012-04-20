@@ -217,7 +217,7 @@ public class MultiPlayer implements GameState {
 				players[0].setX(players[0].getX()+2*mod);
 			}
 		}
-		if(input.isKeyDown(Input.KEY_SPACE) && !bulletExists){
+		if(input.isMouseButtonDown(0) && !bulletExists){
 			float hip = 0.4f * delta;
 			float rotation = player[0].getRotation();
 			bullet.setX(players[0].getX());

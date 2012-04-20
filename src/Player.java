@@ -18,7 +18,6 @@ public class Player {
 	/**
 	 * returns the player's image
 	 */
-	
 	public Image getImage(){
 		return image;
 	}
@@ -28,7 +27,6 @@ public class Player {
 	 * 
 	 * @param Path to image
 	 */
-	
 	public void setImage(String s){
 		try {
 			image = new Image(s);
@@ -38,7 +36,6 @@ public class Player {
 	/**
 	 * returns the player's health
 	 */
-	
 	public int getHealth(){
 		return health;
 	}
@@ -46,15 +43,13 @@ public class Player {
 	/**
 	 * returns the player's name
 	 */
-	
 	public String getName(){
 		return name;
 	}
 	
 	/**
-	 * returns the player's y coordinate
+	 * returns the player's x coordinate
 	 */
-	
 	public float getX(){
 		return x;
 	}
@@ -64,7 +59,6 @@ public class Player {
 	 * 
 	 * @param Coordinate
 	 */
-	
 	public void setX(float i){
 		x=i;
 	}
@@ -72,7 +66,6 @@ public class Player {
 	/**
 	 * returns the player's y coordinate
 	 */
-	
 	public float getY(){
 		return y;
 	}
@@ -82,8 +75,9 @@ public class Player {
 	 * 
 	 * @param Coordinate
 	 */
-	
 	public void setY(float i){
 		y=i;
 	}
+	
+	
 }

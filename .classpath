@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/jorbis-0.0.15.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="CQC - Close Quarters Combat/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="indaprojekt-2012/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/slick.jar"/>
