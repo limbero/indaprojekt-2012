@@ -76,11 +76,7 @@ public class MultiPlayer implements GameState {
 		map = new Image("data/map.jpeg");
 		viewTopLeftX=(map.getWidth()-1600)/2;
 		viewTopLeftY=(map.getHeight()-1200)/2;
-		
-		for(int i = 0; i < bullets.size(); i++){
-			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
-			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
-		}
+
 		//bullet = new Bullet(new Image("data/bullet.jpg"));
 		//time=0;
 	}
@@ -129,9 +125,11 @@ public class MultiPlayer implements GameState {
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
 			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
 				bullets.remove(i);
-			}
-			if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY())){
+			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY())){
 				bullets.remove(i);
+				bullets.add(new Bullet(new Image("data/explosion.png")));
+				bullets.get(bullets.size()-1).setX(players[1].getX());
+				bullets.get(bullets.size()-1).setY(players[1].getY());
 			}
 		}
 

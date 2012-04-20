@@ -14,7 +14,7 @@ public class Player {
 		try {
 			image = new Image("data/player.png");
 		} catch (SlickException e) {}
-		radius = image.getTextureHeight()/2;
+		radius = image.getWidth()/2;
 	}
 	
 	/**
