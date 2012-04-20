@@ -6,6 +6,7 @@ public class Player {
 	private float x, y;
 	private Image image;
 	private int health;
+	private float radius;
 	
 	public Player(String s){
 		name = s;
@@ -13,6 +14,7 @@ public class Player {
 		try {
 			image = new Image("data/player.png");
 		} catch (SlickException e) {}
+		radius = image.getTextureHeight()/2;
 	}
 	
 	/**
@@ -79,5 +81,17 @@ public class Player {
 		y=i;
 	}
 	
+	/**
+	 * Checks if the 2 coordinates is colliding
+	 * with the player.
+	 * @return true if coordinates is colliding
+	 */
+	public boolean checkCollision(float x, float y){
+		if(x < this.x + radius && x > this.x - radius && 
+				y < this.y + radius && y > this.y - radius){
+			return true;
+		}
+		return false;
+	}
 	
 }

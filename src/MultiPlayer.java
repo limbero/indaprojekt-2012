@@ -68,7 +68,10 @@ public class MultiPlayer implements GameState {
 			player[i] = players[i].getImage();
 		}
 		players[0].setX(400);
-		players[0].setX(300);
+		players[0].setY(300);
+		
+		players[1].setX(400);
+		players[1].setY(400);
 		
 		map = new Image("data/map.jpeg");
 		viewTopLeftX=(map.getWidth()-1600)/2;
@@ -89,6 +92,8 @@ public class MultiPlayer implements GameState {
 		
 		map.draw(0, 0, viewTopLeftX, viewTopLeftY, (viewTopLeftX+800), (viewTopLeftY+600));
 		player[0].drawCentered(players[0].getX(), players[0].getY());
+		
+		player[1].drawCentered(players[1].getX(), players[1].getY());
 		
 		//bullet.getImage().draw(bullet.getX(), bullet.getY());
 		
@@ -123,6 +128,9 @@ public class MultiPlayer implements GameState {
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
 			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
+				bullets.remove(i);
+			}
+			if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY())){
 				bullets.remove(i);
 			}
 		}
