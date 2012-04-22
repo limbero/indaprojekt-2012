@@ -7,10 +7,11 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.tiled.TiledMap;
 
 public class MultiPlayer implements GameState {
 	
-	Image map;
+	TiledMap map;
 	
 	Image[] player;
 	Player[] players;
@@ -59,8 +60,13 @@ public class MultiPlayer implements GameState {
 		
 		System.out.println("klient startad");*/
 		
+		map = new TiledMap("data/untitled.tmx");
+		
 		players = new Player[4];
 		player = new Image[4];
+		
+		viewTopLeftX = map.getHeight();
+		viewTopLeftY = 0;
 		
 		for(int i=0; i<4; i++){
 			players[i] = new Player("player"+(i+1));
@@ -71,10 +77,6 @@ public class MultiPlayer implements GameState {
 		
 		players[1].setX(400);
 		players[1].setY(400);
-		
-		map = new Image("data/map.jpeg");
-		viewTopLeftX=(map.getWidth()-1600)/2;
-		viewTopLeftY=(map.getHeight()-1200)/2;
 
 		//bullet = new Bullet(new Image("data/bullet.jpg"));
 		//time=0;
@@ -83,9 +85,7 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sg, Graphics gfx)
 			throws SlickException {
-		//map.setAlpha(0);
 		
-		map.draw(0, 0, viewTopLeftX, viewTopLeftY, (viewTopLeftX+800), (viewTopLeftY+600));
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
 		player[1].drawCentered(players[1].getX(), players[1].getY());
@@ -176,7 +176,7 @@ public class MultiPlayer implements GameState {
 		if(input.isKeyDown(Input.KEY_D))
 		{
 			if(checkBorders(players[0].getX(), players[0].getY())){
-				players[0].setX(players[0].getX()-2*mod);
+				players[0].setX(players[0].getX()+2*mod);
 			}
 		}
 		/*if(input.isMouseButtonDown(0) && !bulletExists){
@@ -204,16 +204,16 @@ public class MultiPlayer implements GameState {
 	 * background.
 	 */
 	public boolean checkBorders(float x, float y){
-		if(x < -viewTopLeftX){
+		if(x < 0){
 			return false;
 		}
-		else if(y < -viewTopLeftY){
+		else if(y < 0){
 			return false;
 		}
-		else if(x >  (map.getWidth()-viewTopLeftX)){
+		else if(x >  map.getWidth()){
 			return false;
 		}
-		else if(y > (map.getHeight()-viewTopLeftY)){
+		else if(y > map.getHeight()){
 			return false;
 		}
 		return true;
