@@ -83,7 +83,7 @@ public class MultiPlayer implements GameState {
 	}
 
 	@Override
-	public void render(GameContainer gc, StateBasedGame sg, Graphics gfx)
+	public void render(GameContainer gc, StateBasedGame sg, Graphics gx)
 			throws SlickException {
 		
 		player[0].drawCentered(players[0].getX(), players[0].getY());
