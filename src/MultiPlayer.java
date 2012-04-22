@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.io.*;   
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -95,7 +94,7 @@ public class MultiPlayer implements GameState {
 		
 		// Draws the bullets in the new position
 		for(int i = 0; i < bullets.size(); i++){
-			bullets.get(i).getImage().draw(bullets.get(i).getX(), bullets.get(i).getY());
+			bullets.get(i).getImage().drawCentered(bullets.get(i).getX(), bullets.get(i).getY());
 		}
 	}
 
@@ -143,7 +142,6 @@ public class MultiPlayer implements GameState {
 				bullets.get(i).setY(players[0].getY());
 				bullets.get(i).setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
 				bullets.get(i).setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
-				time++;
 			}
 //			else if(time==10){
 //				time=0;
@@ -159,50 +157,26 @@ public class MultiPlayer implements GameState {
 		//Player 1 Controls
 		if(input.isKeyDown(Input.KEY_W))
 		{
-			if(viewTopLeftY>0 && players[0].getY()>300){
-				players[0].setY(players[0].getY()-2*mod);
-			}
-			else if(viewTopLeftY>0){
-				viewTopLeftY-=mod;
-			}
-			else if(players[0].getY()>25){
+			if(checkBorders(players[0].getX(), players[0].getY())){
 				players[0].setY(players[0].getY()-2*mod);
 			}
 		}
 		if(input.isKeyDown(Input.KEY_A))
 		{
-			if(viewTopLeftX>0 && players[0].getX()>400){
-				players[0].setX(players[0].getX()-2*mod);
-			}
-			else if(viewTopLeftX>0){
-				viewTopLeftX-=mod;
-			}
-			else if(players[0].getX()>25){
+			if(checkBorders(players[0].getX(), players[0].getY())){
 				players[0].setX(players[0].getX()-2*mod);
 			}
 		}
 		if(input.isKeyDown(Input.KEY_S))
 		{
-			if(viewTopLeftY<600 && players[0].getY()<300){
-				players[0].setY(players[0].getY()+2*mod);
-			}
-			else if(viewTopLeftY<600){
-				viewTopLeftY+=mod;
-			}
-			else if(players[0].getY()<575){
+			if(checkBorders(players[0].getX(), players[0].getY())){
 				players[0].setY(players[0].getY()+2*mod);
 			}
 		}
 		if(input.isKeyDown(Input.KEY_D))
 		{
-			if(viewTopLeftX<800 && players[0].getX()<400){
-				players[0].setX(players[0].getX()+2*mod);
-			}
-			else if(viewTopLeftX<800){
-				viewTopLeftX+=mod;
-			}
-			else if(players[0].getX()<775){
-				players[0].setX(players[0].getX()+2*mod);
+			if(checkBorders(players[0].getX(), players[0].getY())){
+				players[0].setX(players[0].getX()-2*mod);
 			}
 		}
 		/*if(input.isMouseButtonDown(0) && !bulletExists){
