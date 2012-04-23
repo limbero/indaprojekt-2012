@@ -131,14 +131,13 @@ public class MultiPlayer implements GameState {
 			// This will store the effect of the tide map
 			int tileID = map.getTileId((int) bullets.get(i).getX()/map.getTileWidth(), 
 					(int) bullets.get(i).getY()/map.getTileHeight(), 0);
-			String tileProperty = map.getTileProperty(tileID, "blocked", "false");
-			System.out.println(tileProperty);
+			
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
 			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
 				bullets.remove(i);
 			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
-					tileProperty.equals("true")){
+					tileID == 1){
 				bullets.remove(i);
 				bullets.add(new Bullet(new Image("data/explosion.png")));
 				bullets.get(bullets.size()-1).setX(players[1].getX());
