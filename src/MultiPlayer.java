@@ -12,6 +12,8 @@ import org.newdawn.slick.tiled.TiledMap;
 public class MultiPlayer implements GameState {
 	
 	TiledMap map;
+	Camera camera;
+	int mapWidth, mapHeight;
 	
 	Image[] player;
 	Player[] players;
@@ -61,6 +63,9 @@ public class MultiPlayer implements GameState {
 		System.out.println("klient startad");*/
 		
 		map = new TiledMap("data/untitled.tmx");
+		camera = new Camera();
+		mapWidth = map.getTileWidth() * map.getWidth();
+		mapHeight = map.getTileHeight() * map.getHeight();
 		
 		players = new Player[4];
 		player = new Image[4];
@@ -89,6 +94,8 @@ public class MultiPlayer implements GameState {
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
 		player[1].drawCentered(players[1].getX(), players[1].getY());
+		camera.centerArea(map, players[0]);
+		map.render(0, 0);
 		
 		//bullet.getImage().draw(bullet.getX(), bullet.getY());
 		
@@ -103,12 +110,12 @@ public class MultiPlayer implements GameState {
 			throws SlickException {
 
 		Input input = gc.getInput();
-
+ 
 		double r = 0;
-
+		
 		mouseX = input.getMouseX();
 		mouseY = input.getMouseY();
-
+		
 		r = Math.atan2(mouseY-players[0].getY(), mouseX-players[0].getX());
 		player[0].setRotation((float) Math.toDegrees(r+(Math.PI/2)));
 		
@@ -117,14 +124,21 @@ public class MultiPlayer implements GameState {
 //		bullet.setX((float) (bullet.getX() + mod*bullet.getDirectionX()));
 //		bullet.setY((float) (bullet.getY() - mod*bullet.getDirectionY()));
 		
+		
 		// Will update the bullets so they go in the direction of the player
 		// Destroys the bullets outside the screen
 		for(int i = 0; i < bullets.size(); i++){
+			// This will store the effect of the tide map
+			int tileID = map.getTileId((int) bullets.get(i).getX()/map.getTileWidth(), 
+					(int) bullets.get(i).getY()/map.getTileHeight(), 0);
+			String tileProperty = map.getTileProperty(tileID, "blocked", "false");
+			System.out.println(tileProperty);
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
 			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
 				bullets.remove(i);
-			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY())){
+			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
+					tileProperty.equals("true")){
 				bullets.remove(i);
 				bullets.add(new Bullet(new Image("data/explosion.png")));
 				bullets.get(bullets.size()-1).setX(players[1].getX());
