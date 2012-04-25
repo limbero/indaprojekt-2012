@@ -9,12 +9,14 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
+import org.w3c.dom.css.Rect;
 
 public class MultiPlayer implements GameState {
 	
 	TiledMap map;
 	Camera camera;
 	int mapWidth, mapHeight;
+	float screenX, screenY;
 	
 	Image[] player;
 	Player[] players;
@@ -25,7 +27,7 @@ public class MultiPlayer implements GameState {
 	//NetworkClient netcli;
 
 	float mod = (float) 3;
-	int mouseX, mouseY;
+	float mouseX, mouseY;
 	
 	float viewTopLeftX, viewTopLeftY;
 	int time;
@@ -92,15 +94,17 @@ public class MultiPlayer implements GameState {
 	public void render(GameContainer gc, StateBasedGame sg, Graphics gx)
 			throws SlickException {
 		gx.pushTransform();
-		//gx.translate(players[0].getX(), players[0].getY());
+		Rectangle view = camera.getView();
+		gx.translate(-players[0].getX() + view.getWidth()/2,
+				-players[0].getY() + view.getHeight()/2);
 		
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
 		player[1].drawCentered(players[1].getX(), players[1].getY());
 		camera.centerArea(gx, players[0]);
 		
-		Rectangle view = gx.getClip();
-		map.render(0, 0);
+		map.render((int) view.getX(), (int) view.getY(), (int) view.getX()/map.getTileWidth(), (int) view.getY()/map.getTileHeight(),
+				(int) view.getWidth()/map.getTileWidth(), (int) view.getHeight()/map.getTileHeight());
 //		map.render((int) view.getX(), (int) view.getY(), (int) view.getX()/map.getTileWidth(), (int) view.getY()/map.getTileHeight(),
 //				(int) view.getWidth()/map.getTileWidth(), (int) view.getHeight()/map.getTileHeight());
 		
@@ -119,17 +123,15 @@ public class MultiPlayer implements GameState {
  
 		double r = 0;
 		
-		mouseX = input.getMouseX();
-		mouseY = input.getMouseY();
+
+		screenX = camera.getView().getX();
+		screenY = camera.getView().getY();
+		
+		mouseX = input.getMouseX() + screenX;
+		mouseY = input.getMouseY() + screenY;
 		
 		r = Math.atan2(mouseY-players[0].getY(), mouseX-players[0].getX());
 		player[0].setRotation((float) Math.toDegrees(r+(Math.PI/2)));
-		
-//		bulletExists = checkBorders(bullet.getX(), bullet.getY());
-//		
-//		bullet.setX((float) (bullet.getX() + mod*bullet.getDirectionX()));
-//		bullet.setY((float) (bullet.getY() - mod*bullet.getDirectionY()));
-		
 		
 		// Will update the bullets so they go in the direction of the player
 		// Destroys the bullets outside the screen
@@ -140,15 +142,15 @@ public class MultiPlayer implements GameState {
 			
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
-			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
-				bullets.remove(i);
-			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
-					tileID == 1){
-				bullets.remove(i);
-				bullets.add(new Bullet(new Image("data/explosion.png")));
-				bullets.get(bullets.size()-1).setX(players[1].getX());
-				bullets.get(bullets.size()-1).setY(players[1].getY());
-			}
+//			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
+//				bullets.remove(i);
+//			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
+//					tileID == 1){
+//				bullets.remove(i);
+//				bullets.add(new Bullet(new Image("data/explosion.png")));
+//				bullets.get(bullets.size()-1).setX(players[1].getX());
+//				bullets.get(bullets.size()-1).setY(players[1].getY());
+//			}
 		}
 
 		if(input.isMousePressed(0)){
@@ -174,53 +176,31 @@ public class MultiPlayer implements GameState {
 //		}
 		
 		//Player 1 Controls
-		if(input.isKeyDown(Input.KEY_W))
-		{
-			if(checkBorders(players[0].getX(), players[0].getY())){
+		if(input.isKeyDown(Input.KEY_W)){
 				players[0].setY(players[0].getY()-2*mod);
-			}
 		}
-		if(input.isKeyDown(Input.KEY_A))
-		{
-			if(checkBorders(players[0].getX(), players[0].getY())){
-				players[0].setX(players[0].getX()-2*mod);
-			}
+		if(input.isKeyDown(Input.KEY_A)){
+			players[0].setX(players[0].getX()-2*mod);
 		}
-		if(input.isKeyDown(Input.KEY_S))
-		{
-			if(checkBorders(players[0].getX(), players[0].getY())){
-				players[0].setY(players[0].getY()+2*mod);
-			}
+		if(input.isKeyDown(Input.KEY_S)){
+			players[0].setY(players[0].getY()+2*mod);
 		}
-		if(input.isKeyDown(Input.KEY_D))
-		{
-			if(checkBorders(players[0].getX(), players[0].getY())){
-				players[0].setX(players[0].getX()+2*mod);
-			}
+		if(input.isKeyDown(Input.KEY_D)){
+			players[0].setX(players[0].getX()+2*mod);
 		}
 		
-	}
-	
-	/**
-	 * @param x
-	 * @param y
-	 * @return False if the coordinates is outside the
-	 * background.
-	 */
-	public boolean checkBorders(float x, float y){
-		if(x < 0){
-			return false;
+		if(players[0].getX() < 0){
+			players[0].setX(0);
 		}
-		else if(y < 0){
-			return false;
+		else if(players[0].getY() < 0){
+			players[0].setY(0);
 		}
-		else if(x >  map.getWidth()){
-			return false;
+		else if(players[0].getX() >  map.getWidth()){
+			players[0].setX(map.getWidth());
 		}
-		else if(y > map.getHeight()){
-			return false;
+		else if(players[0].getY() > map.getHeight()){
+			players[0].setY(map.getHeight());
 		}
-		return true;
 	}
 
 	//SPACING

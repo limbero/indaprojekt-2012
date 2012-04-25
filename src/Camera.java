@@ -16,4 +16,8 @@ public class Camera{
 		playerView.setCenterY(player.getY());
 		g.setWorldClip(playerView);
 	}
+	
+	public Rectangle getView(){
+		return playerView;
+	}
 }
