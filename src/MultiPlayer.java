@@ -195,11 +195,11 @@ public class MultiPlayer implements GameState {
 		else if(players[0].getY() < 0){
 			players[0].setY(0);
 		}
-		else if(players[0].getX() >  map.getWidth()){
-			players[0].setX(map.getWidth());
+		else if(players[0].getX() >  map.getWidth() * map.getTileWidth()){
+			players[0].setX(map.getWidth() * map.getTileWidth());
 		}
-		else if(players[0].getY() > map.getHeight()){
-			players[0].setY(map.getHeight());
+		else if(players[0].getY() > map.getHeight() * map.getTileHeight()){
+			players[0].setY(map.getHeight() * map.getTileHeight());
 		}
 	}
 
