@@ -5,6 +5,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
@@ -90,19 +91,24 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sg, Graphics gx)
 			throws SlickException {
+		gx.pushTransform();
+		//gx.translate(players[0].getX(), players[0].getY());
 		
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
 		player[1].drawCentered(players[1].getX(), players[1].getY());
-		camera.centerArea(map, players[0]);
-		map.render(0, 0);
+		camera.centerArea(gx, players[0]);
 		
-		//bullet.getImage().draw(bullet.getX(), bullet.getY());
+		Rectangle view = gx.getClip();
+		map.render(0, 0);
+//		map.render((int) view.getX(), (int) view.getY(), (int) view.getX()/map.getTileWidth(), (int) view.getY()/map.getTileHeight(),
+//				(int) view.getWidth()/map.getTileWidth(), (int) view.getHeight()/map.getTileHeight());
 		
 		// Draws the bullets in the new position
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).getImage().drawCentered(bullets.get(i).getX(), bullets.get(i).getY());
 		}
+		gx.popTransform();
 	}
 
 	@Override
@@ -192,22 +198,7 @@ public class MultiPlayer implements GameState {
 				players[0].setX(players[0].getX()+2*mod);
 			}
 		}
-		/*if(input.isMouseButtonDown(0) && !bulletExists){
-			float hip = 0.4f * delta;
-			float rotation = player[0].getRotation();
-			bullet.setX(players[0].getX());
-			bullet.setY(players[0].getY());
-			bullet.setDirectionX((float) (hip * Math.sin(Math.toRadians(rotation))));
-			bullet.setDirectionY((float) (hip * Math.cos(Math.toRadians(rotation))));
-			bulletExists = true;
-		}
-		if(bulletExists){
-			timer++;
-		}
-		if(!bulletExists && timer>0){
-			System.out.println("Bullet flight time: "+timer);
-			timer=0;
-		}*/
+		
 	}
 	
 	/**
