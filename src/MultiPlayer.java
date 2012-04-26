@@ -82,9 +82,6 @@ public class MultiPlayer implements GameState {
 		}
 		players[0].setX(400);
 		players[0].setY(300);
-		
-		players[1].setX(400);
-		players[1].setY(400);
 
 		//bullet = new Bullet(new Image("data/bullet.jpg"));
 		//time=0;
@@ -100,7 +97,6 @@ public class MultiPlayer implements GameState {
 		
 		player[0].drawCentered(players[0].getX(), players[0].getY());
 		
-		player[1].drawCentered(players[1].getX(), players[1].getY());
 		camera.centerArea(gx, players[0]);
 		
 		map.render((int) view.getX(), (int) view.getY(), (int) view.getX()/map.getTileWidth(), (int) view.getY()/map.getTileHeight(),
@@ -142,15 +138,27 @@ public class MultiPlayer implements GameState {
 			
 			bullets.get(i).setX((float) (bullets.get(i).getX() + bullets.get(i).getDirectionX()));
 			bullets.get(i).setY((float) (bullets.get(i).getY() - bullets.get(i).getDirectionY()));
-//			if(!checkBorders(bullets.get(i).getX(), bullets.get(i).getY())){
-//				bullets.remove(i);
-//			}else if(players[1].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
-//					tileID == 1){
-//				bullets.remove(i);
-//				bullets.add(new Bullet(new Image("data/explosion.png")));
-//				bullets.get(bullets.size()-1).setX(players[1].getX());
-//				bullets.get(bullets.size()-1).setY(players[1].getY());
-//			}
+			
+			if(bullets.get(i).getX() < 0){
+				bullets.get(i).setX(0);
+			}
+			else if(bullets.get(i).getY() < 0){
+				bullets.get(i).setY(0);
+			}
+			else if(bullets.get(i).getX() >  map.getWidth() * map.getTileWidth()){
+				bullets.get(i).setX(map.getWidth() * map.getTileWidth());
+			}
+			else if(bullets.get(i).getY() > map.getHeight() * map.getTileHeight()){
+				bullets.get(i).setY(map.getHeight() * map.getTileHeight());
+			}
+			
+			if(players[0].checkCollision(bullets.get(i).getX(), bullets.get(i).getY()) ||
+					tileID == 1){
+				bullets.remove(i);
+				bullets.add(new Bullet(new Image("data/explosion.png")));
+				bullets.get(bullets.size()-1).setX(players[1].getX());
+				bullets.get(bullets.size()-1).setY(players[1].getY());
+			}
 		}
 
 		if(input.isMousePressed(0)){
