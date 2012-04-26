@@ -14,8 +14,8 @@ public class NetworkServerThread extends Thread {
 	public NetworkServerThread(Socket socket) {
 		super("NetworkServerThread");
 		this.socket = socket;
-		owner = "limbero";
-		user = "luddeha";
+		owner = "server";
+		user = "player1";
 	}
 
 	private String readLine() throws IOException {
@@ -52,13 +52,18 @@ public class NetworkServerThread extends Thread {
 					}
 				}
 				else{
+					if(inputLine=="ping"){
+						out.println("pong");
+					}
+					
 					scanner = new Scanner(inputLine);
 					if(scanner.hasNextFloat()){
 						x=scanner.nextFloat();
 						y=scanner.nextFloat();
 					}
 				}
-				inputLine = "exit";
+				inputLine = readLine();
+				//inputLine = "exit";
 			}
 			
 			System.out.println("serverthreaded");
