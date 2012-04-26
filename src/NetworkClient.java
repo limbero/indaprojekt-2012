@@ -13,12 +13,14 @@ public class NetworkClient {
 
 	boolean connected = false;
 
-	public NetworkClient(String ip, Player player, Player hostingPlayer){
+	public NetworkClient(String ip, int serverPort, Player player){
 		p1 = player;
-		hp = hostingPlayer;
+		
 		adress = ip;
+		port =  serverPort;
+		
 		user = player.getName();
-		host = hostingPlayer.getName();
+		host = "server";
 
 		try {
 			ServerSocket = new Socket(adress, port); 
@@ -45,13 +47,16 @@ public class NetworkClient {
 				if(line.equals("host")){
 					out.println(host);
 					a = true;
+					System.out.println("host ident");
 				}
 				if(line.equals("user")){
 					out.println(user);
 					b = true;
+					System.out.println("user ident");
 				}
 				if(line.equals("done")){
 					c=true;
+					System.out.println("totl ident");
 				}
 			}
 			try{
@@ -62,24 +67,29 @@ public class NetworkClient {
 	}
 
 	public boolean connected(){
-		return connected;
+		if(connected){
+			if(ping().equals("pong")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String ping(){
+		String s = send("ping");
+		return s;
 	}
 
-	public void start(){
+	public String send(String s){
 		if(connected){
-			String coords = "";
-			coords = p1.getX()+" "+p1.getY();
-			out.println(coords);
-
-			while(!coords.equals("exit")){
-				out.println(coords);
-			}
-
-			out.close();
+			out.println(s);
+		}
+		line = "";
+		while(line.equals("")){
 			try{
-				in.close();
-				ServerSocket.close();
+				line = in.readLine();
 			} catch (IOException e) {}
 		}
+		return line;
 	}
 }   

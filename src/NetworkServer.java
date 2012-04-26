@@ -7,6 +7,12 @@ public class NetworkServer {
     NetworkServerThread NST;
     ServerSocket serverSocket;
     
+    public static void main(String args[]){
+    	try{
+    		NetworkServer netserv = new NetworkServer();
+    	}catch (IOException e){}
+    }
+    
     public NetworkServer() throws IOException {
         
         serverSocket = null;
