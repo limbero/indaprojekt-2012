@@ -94,4 +94,18 @@ public class Player {
 		return false;
 	}
 	
+	/**
+	 * Returns the players radius
+	 */
+	float getRadius(){
+		return radius;
+	}
+	
+	/**
+	 * Kills the player
+	 */
+	public void die() throws SlickException{
+		image = new Image("data/dead.png");
+	}
+	
 }
