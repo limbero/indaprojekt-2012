@@ -2,10 +2,10 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
 public class Main{
-	
+	static final int gameWith = 1000;
+	static final int gameHeight = 700;
+		
 	public static void main (String args[]) throws SlickException{
-		int gameWith = 800;
-		int gameHeight = 600;
 		
 		GameWithStates game = new GameWithStates("CQC - Close Quarters Combat");
 		AppGameContainer app = new AppGameContainer(game);

@@ -9,26 +9,31 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Bullet {
 	private int speed;
-	private float x;
-	private float y;
 	private Image image;
-	private float directionX;
-	private float directionY;
 	private Vector2f direction;
 	private Vector2f position;
 
-	public Bullet(Image image){
-		this.image = image;
+	/**
+	 * Creates an bullet with image, speed, direction 
+	 * and position.
+	 * 
+	 * @param the image of the bullet
+	 * @param thie position where to spawn the bullet
+	 * @param the direction in wish to fire the bullet
+	 * @throws SlickException if image fails
+	 */
+	public Bullet(String image, Vector2f position, float rotation) throws SlickException{
+		// Creates the image and vectors for position and direction
+		this.image = new Image(image);
 		direction = new Vector2f();
-		position = new Vector2f();
-	}
-
-	public float getX(){
-		return x;
-	}
-
-	public float getY(){
-		return y;
+		this.position = new Vector2f(position);
+		this.image.rotate(rotation);
+		direction.set(0, -1);
+		direction.sub(-rotation);
+		direction.normalise();
+		position.set(position);
+		position.add(direction.copy().scale(15));
+		direction.scale(30);
 	}
 
 	public Image getImage(){
@@ -37,31 +42,6 @@ public class Bullet {
 
 	public int speed(){
 		return speed;
-	}
-
-	public void setX(float x){
-		this.x = x;
-	}
-
-	public void setY(float y){
-		this.y = y;
-	}
-	
-	public void setDirectionX(float direction){
-		this.directionX = direction;
-	}
-	
-	public void setDirectionY(float direction){
-		this.directionY = direction;
-	}
-	
-	public float getDirectionX(){
-		return directionX;
-		
-	}
-	
-	public float getDirectionY(){
-		return directionY;
 	}
 	
 	public Vector2f getPosition(){

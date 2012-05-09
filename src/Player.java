@@ -1,5 +1,6 @@
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 
 public class Player {
 	private String name;
@@ -7,10 +8,13 @@ public class Player {
 	private Image image;
 	private int health;
 	private float radius;
+	private Vector2f position;
+	private Vector2f direction;
 	
 	public Player(String s){
 		name = s;
 		health = 100;
+		position = new Vector2f();
 		try {
 			image = new Image("data/player.png");
 		} catch (SlickException e) {}
@@ -57,6 +61,24 @@ public class Player {
 	}
 	
 	/**
+	 * Returns a position vector for the player
+	 */
+	public Vector2f getPosition(){
+		position.set(x, y);
+		return position;
+	}
+	
+	/**
+	 * Returns a normalized vector in the players 
+	 * direction.
+	 */
+	public Vector2f getDirection(){
+		direction = new Vector2f(0, -1);
+		direction.sub(-image.getRotation());
+		return direction;
+	}
+	
+	/**
 	 * sets the player's x coordinate
 	 * 
 	 * @param Coordinate
@@ -99,6 +121,13 @@ public class Player {
 	 */
 	float getRadius(){
 		return radius;
+	}
+	
+	/**
+	 * Renders the player on the screen
+	 */
+	public void render(){
+		
 	}
 	
 	/**

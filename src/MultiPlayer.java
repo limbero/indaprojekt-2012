@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -126,6 +127,9 @@ public class MultiPlayer implements GameState {
 		// Render the entire tiled map
 		map.render(0, 0);
 
+		// Hides the non-vision of the player by drawing triangles
+		camera.hideUnseen(players.get(0), gx);
+		
 		// Applyes the transformation on everything
 		gx.popTransform();
 	}
@@ -175,10 +179,10 @@ public class MultiPlayer implements GameState {
 			else if(bullets.get(i).getPosition().getY() < 0){
 				bullets.remove(i);
 			}
-			else if(bullets.get(i).getPosition().getX() >  map.getWidth() * map.getTileWidth()){
+			else if(bullets.get(i).getPosition().getX() > mapWidth){
 				bullets.remove(i);
 			}
-			else if(bullets.get(i).getPosition().getY() > map.getHeight() * map.getTileHeight()){
+			else if(bullets.get(i).getPosition().getY() > mapHeight){
 				bullets.remove(i);
 			}
 			else if(tileID == 1){
@@ -196,20 +200,8 @@ public class MultiPlayer implements GameState {
 		// Creates a bullet with direction of the player
 		if(input.isMousePressed(0)){
 			if(bullets.size()<100){
-				float rotation = players.get(0).getImage().getRotation();
-				bullets.add(new Bullet(new Image("data/bullet.jpg")));
-				int i = bullets.size()-1;
-				bullets.get(i).getImage().rotate(rotation);
-				Vector2f direction = new Vector2f();
-				Vector2f position = new Vector2f();
-				direction.set(0, -1);
-				direction.sub(-rotation);
-				direction.normalise();
-				position.set(players.get(0).getX(), players.get(0).getY());
-				position.add(direction.copy().scale(players.get(0).getRadius()+1));
-				direction.scale(20);
-				bullets.get(i).setPosition(position);
-				bullets.get(i).setDirection(direction);
+				bullets.add(new Bullet("data/bullet.jpg", players.get(0).getPosition(),
+						players.get(0).getImage().getRotation()));
 			}
 		}
 
