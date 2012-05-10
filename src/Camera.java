@@ -1,5 +1,6 @@
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.tiled.TiledMap;
@@ -23,7 +24,7 @@ public class Camera{
 		playerView.setCenterX(player.getX());
 		playerView.setCenterY(player.getY());
 		g.setWorldClip(playerView);
-		viewAngle = 160;
+		viewAngle = 100;
 	}
 	
 	public Rectangle getView(){
@@ -64,6 +65,7 @@ public class Camera{
 		hidden3.addPoint(pointCalc.getX(), pointCalc.getY());
 		hidden.addPoint(pointCalc.getX(), pointCalc.getY());
 		
+		gx.setColor(new Color((float) 0.05, (float) 0.05, (float) 0.05, (float) 0.97));
 		gx.fill(hidden);
 		gx.fill(hidden2);
 		gx.fill(hidden3);

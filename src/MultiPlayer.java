@@ -130,7 +130,7 @@ public class MultiPlayer implements GameState {
 		// Hides the non-vision of the player by drawing triangles
 		camera.hideUnseen(players.get(0), gx);
 		
-		// Applyes the transformation on everything
+		// Applies the transformation on everything
 		gx.popTransform();
 	}
 
