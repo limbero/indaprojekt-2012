@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -12,6 +13,7 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 import org.w3c.dom.css.Rect;
+import java.io.*;
 
 public class MultiPlayer implements GameState {
 
@@ -29,8 +31,6 @@ public class MultiPlayer implements GameState {
 	// Stores the old x and y of the player
 	float oldX, oldY;
 
-	//NetworkServer netserv;
-	//NetworkClient netcli;
 
 	// Mod is the speed of the player
 	float mod = (float) 3;
@@ -54,27 +54,6 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sg)
 			throws SlickException {
-		/*try{
-			netserv = new NetworkServer();
-		}catch (IOException e){}
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
-
-		System.out.println("server uppe");
-
-		netcli = new NetworkClient("localhost", p1, p1);
-
-		System.out.println("klient inledd");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
-
-		netcli.start();
-
-		System.out.println("klient startad");*/
-
 		// Gives all the variables their initial values.
 		map = new TiledMap("data/untitled.tmx");
 		camera = new Camera();
@@ -82,8 +61,9 @@ public class MultiPlayer implements GameState {
 		mapHeight = map.getTileHeight() * map.getHeight();
 
 		players = new ArrayList<Player>();
-
-		players.add(new Player("player1"));
+		
+		Random random = new Random();
+		players.add(new Player(""+random.nextInt()));
 
 		players.get(0).setX(500);
 		players.get(0).setY(300);
@@ -217,6 +197,9 @@ public class MultiPlayer implements GameState {
 		}
 		if(input.isKeyDown(Input.KEY_D)){
 			players.get(0).setX(players.get(0).getX()+2*mod);
+		}
+		if(input.isKeyPressed(Input.KEY_F)){
+			camera.toggleFlashLight();
 		}
 
 		if(players.get(0).getX() < 0){

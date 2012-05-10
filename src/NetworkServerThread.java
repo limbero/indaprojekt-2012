@@ -55,7 +55,9 @@ public class NetworkServerThread extends Thread {
 					if(inputLine=="ping"){
 						out.println("pong");
 					}
-					
+					else if(inputLine != null){
+						System.out.println(inputLine);
+					}
 					scanner = new Scanner(inputLine);
 					if(scanner.hasNextFloat()){
 						x=scanner.nextFloat();
