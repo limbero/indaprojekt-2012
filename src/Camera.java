@@ -14,7 +14,7 @@ public class Camera{
 	float forwardPointView;
 	float hideLength;
 
-	boolean flashlight;
+	boolean flashlight = true;
 
 	public Camera(){
 		playerView = new Rectangle(0, 0, viewWidth, viewHeight);
@@ -62,7 +62,7 @@ public class Camera{
 		flash.addPoint(player.getPosition().getX(), player.getPosition().getY());
 
 		pointCalc.sub(viewAngle/2);
-		pointCalc.scale(forwardPointView);
+		pointCalc.scale((float) (forwardPointView*1.5));
 		pointCalc.add(player.getPosition());
 		hidden2.addPoint(pointCalc.getX(), pointCalc.getY());
 		flash.addPoint(pointCalc.getX(), pointCalc.getY());
@@ -72,7 +72,7 @@ public class Camera{
 
 		pointCalc = player.getDirection();
 		pointCalc.sub(-viewAngle/2);
-		pointCalc.scale(forwardPointView);
+		pointCalc.scale((float) (forwardPointView*1.5));
 		pointCalc.add(player.getPosition());
 		hidden3.addPoint(pointCalc.getX(), pointCalc.getY());
 		flash.addPoint(pointCalc.getX(), pointCalc.getY());
