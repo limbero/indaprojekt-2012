@@ -23,7 +23,7 @@ public class NetworkClient {
 
 		Player opponent = null;
 		try {
-			socket = new Socket("localhost", 3000);
+			socket = new Socket("80.216.249.30", 3000);
 
 			oos = new ObjectOutputStream(socket.getOutputStream());
 			ois = new ObjectInputStream(socket.getInputStream());

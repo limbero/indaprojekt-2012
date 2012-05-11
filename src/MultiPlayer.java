@@ -62,8 +62,6 @@ public class MultiPlayer implements GameState {
 	public void init(GameContainer gc, StateBasedGame sg)
 			throws SlickException {
 
-
-
 		// Gives all the variables their initial values.
 		map = new TiledMap("data/untitled.tmx");
 		camera = new Camera();
@@ -75,15 +73,13 @@ public class MultiPlayer implements GameState {
 		players.add(new Player("limbero"));
 
 		players.get(0).setX(500);
-		players.get(0).setY(300);
+		players.get(0).setY(350);
 		players.get(0).setImage("data/player.png");
 
 		try{
 			FileOutputStream fos = new FileOutputStream("player.txt");
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			Player temp = players.get(0);
-			temp.setX(temp.getX()+20);
-			temp.setY(temp.getY()+20);
 			oos.writeObject(temp);
 			oos.flush();
 			oos.close();
