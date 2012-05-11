@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Random;
+import java.io.*;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -13,7 +13,6 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 import org.w3c.dom.css.Rect;
-import java.io.*;
 
 public class MultiPlayer implements GameState {
 
@@ -24,7 +23,7 @@ public class MultiPlayer implements GameState {
 	int mapWidth, mapHeight;
 	// The position of the screen/camera/window in the "game world"
 	float screenX, screenY;
-	
+
 	// An array to store players
 	ArrayList<Player> players;
 
@@ -41,6 +40,14 @@ public class MultiPlayer implements GameState {
 	// server is necessary,
 	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
+	//Opposing player
+	Player opponent;
+
+	//Network Client for fetching opponent player and their bullets
+	NetworkClient netcli = new NetworkClient();
+
+	NetworkServer netserv;
+
 	/**
 	 * The constructor of the MultiPlayer class.
 	 */
@@ -54,6 +61,9 @@ public class MultiPlayer implements GameState {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sg)
 			throws SlickException {
+
+
+
 		// Gives all the variables their initial values.
 		map = new TiledMap("data/untitled.tmx");
 		camera = new Camera();
@@ -61,18 +71,38 @@ public class MultiPlayer implements GameState {
 		mapHeight = map.getTileHeight() * map.getHeight();
 
 		players = new ArrayList<Player>();
-		
-		Random random = new Random();
-		players.add(new Player(""+random.nextInt()));
+
+		players.add(new Player("limbero"));
 
 		players.get(0).setX(500);
 		players.get(0).setY(300);
+		players.get(0).setImage("data/player.png");
 
-		//bullet = new Bullet(new Image("data/bullet.jpg"));
-		//time=0;
+		try{
+			FileOutputStream fos = new FileOutputStream("player.txt");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			Player temp = players.get(0);
+			temp.setX(temp.getX()+20);
+			temp.setY(temp.getY()+20);
+			oos.writeObject(temp);
+			oos.flush();
+			oos.close();
+			fos.close();
+		}catch(IOException e){}
+
+		try{
+			netserv = new NetworkServer();
+		}catch(Exception e){}
+
+		try{
+			opponent = (Player) netcli.fetch();
+			players.add(opponent);
+			players.get(1).setImage("data/player.png");
+			System.out.println("Opponent added");
+		}catch(Exception e){}
 	}
 
-	
+
 	/**
 	 * Will draw the graphics changed in update on the screen.
 	 */
@@ -86,13 +116,13 @@ public class MultiPlayer implements GameState {
 		// This translation will be applied on everything
 		gx.translate(-players.get(0).getX() + view.getWidth()/2,
 				-players.get(0).getY() + view.getHeight()/2);
-		
+
 		// Draws the bullets in the new position
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).getImage().drawCentered(bullets.get(i).getPosition().getX(), 
 					bullets.get(i).getPosition().getY());
 		}
-		
+
 		// Draws the players in their new position
 		for(int i = 0; i < players.size(); i++){
 			players.get(i).getImage().drawCentered(players.get(i).getX(), players.get(i).getY());
@@ -103,13 +133,13 @@ public class MultiPlayer implements GameState {
 
 		//map.render((int) view.getX(), (int) view.getY(), (int) view.getX()/map.getTileWidth(), (int) view.getY()/map.getTileHeight(),
 		//	(int) view.getWidth()/map.getTileWidth(), (int) view.getHeight()/map.getTileHeight());
-		
+
 		// Render the entire tiled map
 		map.render(0, 0);
 
 		// Hides the non-vision of the player by drawing triangles
 		camera.hideUnseen(players.get(0), gx);
-		
+
 		// Applies the transformation on everything
 		gx.popTransform();
 	}
@@ -126,6 +156,31 @@ public class MultiPlayer implements GameState {
 		Input input = gc.getInput();
 
 		double r = 0;
+		
+		try{
+			FileOutputStream fos = new FileOutputStream("player.txt");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			Player temp = players.get(0);
+			oos.writeObject(temp);
+			oos.flush();
+			oos.close();
+			fos.close();
+		}catch(IOException e){}
+
+		if(players.size()==1){
+			try{
+				opponent = (Player) netcli.fetch();
+				players.add(opponent);
+				players.get(1).setImage("data/player.png");
+			}catch(Exception e){}
+		}
+		else{
+			try{
+				opponent = (Player) netcli.fetch();
+			}catch(Exception e){}
+			players.get(1).setX(opponent.getX());
+			players.get(1).setY(opponent.getY());
+		}
 
 		// Stores the players old coordinates for collision
 		oldX = players.get(0).getX();
@@ -171,7 +226,7 @@ public class MultiPlayer implements GameState {
 				for(int j = 0; j < players.size(); j++){
 					if(players.get(j).checkCollision(bullets.get(i).getPosition().getX(), 
 							bullets.get(i).getPosition().getY())){
-					players.get(j).die();
+						players.get(j).die();
 					}
 				}
 			}

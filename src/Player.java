@@ -2,23 +2,18 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-public class Player {
+public class Player implements java.io.Serializable{
 	private String name;
 	private float x, y;
-	private Image image;
-	private int health;
+	transient private Image image = null;
 	private float radius;
-	private Vector2f position;
-	private Vector2f direction;
+	transient private Vector2f position;
+	transient private Vector2f direction;
 	
 	public Player(String s){
 		name = s;
-		health = 100;
 		position = new Vector2f();
-		try {
-			image = new Image("data/player.png");
-		} catch (SlickException e) {}
-		radius = image.getWidth()/2;
+		//radius = image.getWidth()/2;
 	}
 	
 	/**
@@ -37,13 +32,6 @@ public class Player {
 		try {
 			image = new Image(s);
 		} catch (SlickException e) {}
-	}
-	
-	/**
-	 * returns the player's health
-	 */
-	public int getHealth(){
-		return health;
 	}
 	
 	/**

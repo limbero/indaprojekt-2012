@@ -9,9 +9,9 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Bullet {
 	private int speed;
-	private Image image;
-	private Vector2f direction;
-	private Vector2f position;
+	transient private Image image;
+	transient private Vector2f direction;
+	transient private Vector2f position;
 
 	/**
 	 * Creates an bullet with image, speed, direction 
